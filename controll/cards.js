@@ -1,4 +1,4 @@
-const path = require('path');
+/* const path = require('path');
 const readFile = require('../utils/readFile');
 
 const getCards = (req, res) => readFile(path.join(__dirname, '..', 'data', 'cards.json'))
@@ -12,3 +12,4 @@ const getCards = (req, res) => readFile(path.join(__dirname, '..', 'data', 'card
 module.exports = {
   getCards,
 };
+ */

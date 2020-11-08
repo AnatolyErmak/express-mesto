@@ -1,30 +1,42 @@
-const path = require('path');
-const readFile = require('../utils/readFile');
+const User = require('../models/user');
 
-const getUsers = (req, res) => readFile(path.join(__dirname, '..', 'data', 'users.json'))
-  .then((data) => {
-    res.status(200).send(JSON.parse(data));
-  })
-  .catch((err) => {
-    res.status(500).send({ message: err.message });
-  });
+const getUsers = (req, res) => {
+  User.find({})
+    .then((users) => res.status(200).send(users))
+    .catch(() => res.status(500).send({ message: 'произошла ошибка' }));
+};
 
 const getUserById = (req, res) => {
-  readFile(path.join(__dirname, '..', 'data', 'users.json'))
-    .then((data) => {
-      const user = JSON.parse((data)).find((item) => item._id === req.params.id);
-      if (!user) {
-        res.status(404).send({ message: `Нет пользователя с id ${req.params.id}` });
-        return;
+  User.findById(req.params.userId)
+    .then((user) => {
+      if (user === null || undefined) {
+        return res.status(404).send({ message: 'такого пользователя не существует' });
       }
-      res.status(200).send(user);
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
-      res.status(500).send({ message: err.message });
+      if (err.name === 'CastError') {
+        return res.status(404).send({ message: 'Такого пользователя нет' });
+      }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
+    });
+};
+
+const postUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+
+  User.create({ name, about, avatar })
+    .then((user) => res.status(201).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        return res.status(400).send({ message: 'некорректные данные' });
+      }
+      return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
 module.exports = {
   getUsers,
   getUserById,
+  postUser,
 };
