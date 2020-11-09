@@ -1,9 +1,11 @@
 const express = require('express');
 const mongoose = require('mongoose');
+// body-parser извлекает всю часть тела входящего потока запросов и предоставляет его на req. body
 const bodyParser = require('body-parser');
-
 const usersRoutes = require('./routes/users');
 const cardsRoutes = require('./routes/cards');
+
+const { PORT = 3000 } = process.env;
 
 const app = express();
 
@@ -17,13 +19,19 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-const { PORT = 3000 } = process.env;
+app.use((req, res, next) => {
+  req.user = {
+    _id: '5fa8570286fbd316040924a0',
+  };
+
+  next();
+});
 
 app.use('/', usersRoutes);
 app.use('/', cardsRoutes);
 
 app.all('*', (req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+  res.status(404).send({ message: 'запрос не найден' });
 });
 
 app.listen(PORT, () => {
