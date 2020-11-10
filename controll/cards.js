@@ -20,7 +20,7 @@ const postCard = (req, res) => {
 };
 
 const deleteCard = (req, res) => {
-  Card.findByIdAndDelete(req.params.CardId)
+  Card.findByIdAndDelete(req.params.cardId)
     .then((card) => {
       if (card === null || undefined) {
         return res.status(404).send({ message: 'не найдена карточка' });
@@ -29,7 +29,7 @@ const deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: err.message });
+        return res.status(400).send({ message: err.message });
       }
       return res.status(500).send({ message: err.message });
     });

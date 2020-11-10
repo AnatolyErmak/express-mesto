@@ -16,7 +16,7 @@ const getUserById = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(404).send({ message: 'Такого пользователя нет' });
+        return res.status(400).send({ message: 'Такого пользователя нет' });
       }
       return res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
